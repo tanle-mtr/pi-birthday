@@ -1,0 +1,48 @@
+name: ✨ 功能建议
+description: 想要新功能，或对现有行为有改进想法
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 你想解决什么问题
+      description: 描述使用场景，而不是直接说方案 —— 这样我能想更好的实现
+      placeholder: |
+        例如：我想批量查一群朋友的生日，一个个手输太慢了。
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 你设想的方案（可选）
+      placeholder: |
+        例如：支持 `--file birthdays.txt` 从文件读取多行生日。
+    validations:
+      required: false
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 涉及哪个部分
+      multiple: true
+      options:
+        - 命令行接口
+        - 网页版界面
+        - 桌面版界面
+        - 搜索算法 / 性能
+        - 数据来源（更长的 π）
+        - 输出格式（JSON / 导出）
+        - 文档
+        - 其他
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 确认
+      options:
+        - label: 我搜索过已有的 issue，没有重复
+          required: true

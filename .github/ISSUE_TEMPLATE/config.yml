@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 先读 README
+    url: https://github.com/tanle-mtr/pi-birthday#readme
+    about: 安装、用法、常见问题（包括「为什么我的生日找不到」）都在这里
+  - name: 💬 讨论区
+    url: https://github.com/tanle-mtr/pi-birthday/discussions
+    about: 使用疑问、想法交流、展示你的查询结果

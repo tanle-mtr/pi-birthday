@@ -1,0 +1,79 @@
+name: 🐛 报告问题
+description: 程序崩溃、结果不对、功能异常
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 先看一眼：生日找不到**不是** bug
+
+        8 位数字在 π 中首次出现的位置服从均匀分布，命中率 = `1 - e^(-N/1e8)`：
+
+        | 搜索位数 | 命中率 |
+        |---|---|
+        | 1000 万（内置） | 约 10% |
+        | 1 亿 | 约 63% |
+        | 10 亿（离线包） | 约 99.99% |
+
+        请先确认下载了 `pi_1b.pack` 并放在 exe **同目录**，再往下填。
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 发生了什么
+      description: 描述现象，以及你期望的结果
+      placeholder: |
+        例如：运行 `PiBirthdayCLI.exe 1990-01-01` 后程序直接退出，没有任何输出。
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: 完整命令与输出
+      description: 把命令和完整输出贴进来（不要只贴报错那一行）
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: info
+    attributes:
+      label: 环境信息
+      description: |
+        运行 `python cli.py --info`（或 `PiBirthdayCLI.exe --info`）后把输出贴在这里。
+        用 exe 的话，也说明一下是哪个 exe、放在哪个目录、同目录有没有 pi_1b.pack。
+      render: text
+      placeholder: |
+        ```
+        （--info 的输出）
+        ```
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: 涉及哪个部分
+      multiple: true
+      options:
+        - 命令行（cli.py / PiBirthdayCLI.exe）
+        - 网页版（pi_web_shell.py / PiBirthdayWeb.exe）
+        - 桌面版（pi_birthday.py / PiBirthday.exe）
+        - 离线数据包（pi_1b.pack）
+        - 本地计算（gmpy2 / Chudnovsky）
+        - 构建与打包（PyInstaller）
+        - 不确定
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 确认
+      options:
+        - label: 我确认这不是「生日在数据范围内不存在」的概率问题
+          required: true
+        - label: 我搜索过已有的 issue，没有重复
+          required: true
