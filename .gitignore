@@ -1,0 +1,53 @@
+# 构建产物
+build/
+dist/
+dist_web/
+dist_onedir/
+build_web/
+build_onedir/
+*.spec.bak
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# 大数据文件（通过 GitHub Releases 分发，不进仓库）
+#   pi_1b.pack   449 MB —— 10 亿位离线数据包
+#   chunks/      下载中间产物
+pi_1b.pack
+pi_offline.pack
+pi_test.pack
+chunks/
+*.pack
+
+# 生成的图标（可用 make_icon.py 重新生成）
+#   assets/icon.ico / icon.png 体积很小，保留进仓库方便直接用
+assets/icon_preview.png
+
+# 运行时产物
+pi_cache/
+*.log
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# PyInstaller 临时
+*.manifest
+warn-*.txt
+xref-*.html

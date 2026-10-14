@@ -1,0 +1,18 @@
+# 生日在圆周率第几位？ —— 运行依赖
+#
+# 核心依赖只有 gmpy2 一个：它是整个项目的性能基础，
+# 用纯 Python 的 decimal 回退方案会慢约 1000 倍（见 README 性能说明）。
+#
+#   pip install -r requirements.txt
+
+gmpy2>=2.1.0
+
+# ---- 可选：仅网页版外壳需要 ----
+# 桌面版（tkinter）和命令行版都不需要它。
+# 注释掉是为了让「只想用 CLI」的用户装最少的依赖。
+#
+# pywebview>=5.0
+
+# ---- 可选：仅开发/打包需要 ----
+# pyinstaller>=6.0      # 打包 exe
+# pillow>=10.0          # tools/make_icon.py 生成图标

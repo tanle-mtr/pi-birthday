@@ -1,0 +1,18 @@
+# 开发与打包所需的额外依赖
+#
+#   pip install -r requirements-dev.txt
+#
+# 普通用户只需要 requirements.txt。
+
+-r requirements.txt
+
+# 网页版外壳（复用系统 WebView2，不需要打包浏览器）
+pywebview>=5.0
+
+# 打包 exe
+pyinstaller>=6.0
+# PyInstaller 的第三方 hook 集，含 gmpy2 的 hook
+pyinstaller-hooks-contrib>=2024.0
+
+# tools/make_icon.py 生成图标
+pillow>=10.0

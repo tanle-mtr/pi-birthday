@@ -1,0 +1,22 @@
+# 统一换行符，避免跨平台协作时整个文件显示为「已修改」
+* text=auto eol=lf
+
+# Windows 专用文件保留 CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# 二进制文件不做换行转换
+*.pack binary
+*.z binary
+*.ico binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.exe binary
+*.zip binary
+
+# 让 GitHub 语言统计更准确（当前会被 anime.min.js 带偏）
+web/vendor/* linguist-vendored
+*.min.js linguist-generated
+*.min.css linguist-generated

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>生日在圆周率第几位？</title>
+<link rel="icon" href="icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 背景：极光光斑 + 网格 + 噪点 -->
+<div class="aurora" aria-hidden="true">
+  <span class="orb o1"></span>
+  <span class="orb o2"></span>
+  <span class="orb o3"></span>
+</div>
+<div class="grid-overlay" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<main class="stage">
+
+  <header class="hero" id="hero">
+    <div class="badge" data-anim="fade">
+      <span class="dot"></span> PI · BIRTHDAY FINDER
+    </div>
+    <h1 data-anim="fade">
+      你的生日，藏在 π 的<br>
+      <span class="shiny">第几位</span>？
+    </h1>
+    <p class="sub" data-anim="fade">
+      内置 <strong id="seedCount">1000 万</strong>位圆周率 ·
+      <span class="ok">纯离线</span> · 找不到会自动继续往后算
+    </p>
+  </header>
+
+  <!-- 主面板 -->
+  <section class="panel" id="panel" data-anim="fade">
+    <div class="spotlight" id="spotlight" aria-hidden="true"></div>
+    <div class="panel-inner">
+
+      <!-- 生日：三个下拉框，免打字、免格式错误 -->
+      <!-- autocomplete="off" 很重要：WebView2 会持久化表单值并在启动时恢复，
+           曾导致「下拉框显示 2012/5/28，结果却是别的生日」这种错位 -->
+      <div class="date-group" autocomplete="off">
+        <div class="field">
+          <label for="by">年</label>
+          <div class="select-wrap"><select id="by" autocomplete="off"></select></div>
+        </div>
+        <div class="field">
+          <label for="bm">月</label>
+          <div class="select-wrap"><select id="bm" autocomplete="off"></select></div>
+        </div>
+        <div class="field">
+          <label for="bd">日</label>
+          <div class="select-wrap"><select id="bd" autocomplete="off"></select></div>
+        </div>
+      </div>
+
+      <button class="btn" id="go">
+        <span class="btn-glow"></span>
+        <span class="btn-label">开始查找</span>
+        <span class="btn-spinner" aria-hidden="true"></span>
+      </button>
+
+    </div>
+
+    <!-- 进度 / 深度指示 -->
+    <div class="loader" id="loader">
+      <div class="loader-bar"><i id="loaderFill"></i></div>
+      <div class="loader-row">
+        <span class="loader-text" id="loaderText">正在装载内置圆周率数据…</span>
+        <span class="loader-depth" id="loaderDepth"></span>
+      </div>
+    </div>
+
+    <!-- 深层计算（内置数据里没有时，用 gmpy2 继续往后算） -->
+    <div class="deep" id="deep" hidden>
+      <div class="deep-head">
+        <span class="deep-title">
+          <span class="deep-spin" id="deepSpin"></span>
+          <span id="deepTitle">继续往后算…</span>
+        </span>
+        <span class="deep-actions">
+          <button class="deep-stop go" id="deepMore" hidden>继续往后算</button>
+          <button class="deep-stop" id="deepStop" hidden>停止</button>
+        </span>
+      </div>
+      <div class="deep-steps" id="deepSteps"></div>
+      <div class="deep-msg" id="deepMsg"></div>
+    </div>
+  </section>
+
+  <!-- 结果区 -->
+  <section class="results" id="results" hidden>
+    <div class="verdict" id="verdict"></div>
+    <div class="cards" id="cards"></div>
+    <p class="foot" id="foot"></p>
+  </section>
+
+  <p class="hint" id="hint" data-anim="fade">
+    选好年月日点一下就行 —— 先在内置的 1000 万位里秒搜，
+    找不到完整生日就自动调用本机 gmpy2 继续往后算，全程不联网。
+  </p>
+
+</main>
+
+<script src="vendor/anime.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
