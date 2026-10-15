@@ -133,6 +133,37 @@ python -m PyInstaller --clean -y --distpath dist_web --workpath build_web PiWeb.
 
 注意：打包前**先关闭正在运行的 exe**，否则报 `PermissionError: [WinError 5]`。
 
+### ⚠️ 打包后必须实测 exe，不能只测源码
+
+**踩过的坑（v1.0.0 差点带着它发布）**：`PiBirthday.spec` 里两个 EXE
+（GUI 版和 CLI 版）**共用 `pi_birthday.py` 作为入口**，而新的 `cli.py`
+根本没被打进去。结果：
+
+```
+PiBirthdayCLI.exe 1990-01-01 --json
+```
+
+老入口不认这些参数，缺少必填的 `--birthday` 时它 **fallback 到 `run_gui()`**，
+在无显示环境下打开 tkinter 窗口 → **永久卡死**。
+
+症状很有迷惑性：
+- 进程起来了，占 60 MB 内存（看起来正常）
+- stdout **一个字节都不输出**
+- **永不退出**（等一个永远不出现的 GUI 窗口）
+- 文件和本地构建版**哈希完全一致** —— 所以怎么比对文件都查不出问题
+
+**排查绕了很远**：先怀疑下载损坏（哈希一致，排除）→ 怀疑网络标记
+Zone.Identifier（没有，排除）→ 怀疑路径冲突（换目录仍复现）→
+最后看**进程树**才发现应用进程起来了、只是不干活。
+
+**教训**：源码测试和打包测试是两件事。改完 CLI 一定要跑一遍
+
+```bash
+python tests/verify_release.py     # 从 GitHub 下载发布产物并实际运行
+```
+
+或者在打包后直接手工验一遍所有子命令与退出码。
+
 ---
 
 ## 📜 许可证

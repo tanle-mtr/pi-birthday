@@ -1,18 +1,30 @@
 # -*- mode: python ; coding: utf-8 -*-
 """
-PyInstaller 打包配置：生日在圆周率第几位（并行加速版）
+PyInstaller 打包配置：生日在圆周率第几位
 
-同时产出两个可执行文件：
-  dist/PiBirthday.exe     图形界面版（无控制台窗口）
-  dist/PiBirthdayCLI.exe  命令行版（带控制台，便于脚本调用）
+产出两个可执行文件：
+  dist/PiBirthday.exe     桌面图形界面版（无控制台窗口）
+  dist/PiBirthdayCLI.exe  命令行版（带控制台）
+
+⚠️ 两个 exe 的**入口脚本不同**，这是踩过坑的地方：
+  · GUI 版入口 = pi_birthday.py，不带参数时进 tkinter 界面
+  · CLI 版入口 = cli.py，纯命令行，支持 --json / --info / 退出码
+
+早期版本两个 EXE 共用 pi_birthday.py 作为入口，导致
+`PiBirthdayCLI.exe 1990-01-01 --json` 这种新 CLI 的用法完全不被识别 ——
+老入口只认 `--cli --birthday`，而缺少必填参数时它会 fallback 到
+run_gui()，在无显示环境下打开 tkinter 窗口**永久卡死**
+（表现为：进程起来了、占 60 MB 内存、stdout 一个字节都不输出、永不退出）。
 
 关键点：
   * copy_metadata('gmpy2') —— gmpy2 的 __init__ 会调用
     importlib.metadata.version('gmpy2')，若不打包 dist-info 元数据，
-    运行时会抛 PackageNotFoundError: No package metadata was found for gmpy2
+    运行时会抛 PackageNotFoundError
   * 程序内已调用 multiprocessing.freeze_support()，
     否则冻结后创建子进程会无限递归复制自身
 """
+
+import os
 
 from PyInstaller.utils.hooks import copy_metadata
 
@@ -23,20 +35,17 @@ datas = copy_metadata('gmpy2')
 # 有了它，前 1000 万位可以「不联网 + 不计算」直接秒出。
 # 存压缩版是因为 onefile 每次启动都要把内置文件解压到临时目录，
 # 压缩后每次启动的解压量从 9.5MB 降到 4.5MB。
-import os
 _SEED = 'pi_seed_10m.z'
 if os.path.exists(_SEED):
     datas += [(_SEED, '.')]
 else:
     print('WARNING: 未找到内置数据 %s，将构建出不带离线数据的版本！'
-          '可运行 python make_seed.py 生成。' % _SEED)
+          '可运行 python tools/make_seed.py 生成。' % _SEED)
 
-a = Analysis(
-    ['pi_birthday.py'],
+_COMMON = dict(
     pathex=[],
     binaries=[],
     datas=datas,
-    hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -49,23 +58,13 @@ a = Analysis(
     optimize=0,
 )
 
-pyz = PYZ(a.pure)
-
-# ---------- 图形界面版：不显示黑色控制台窗口 ----------
-exe_gui = EXE(
-    pyz,
-    a.scripts,
-    a.binaries,
-    a.datas,
-    [],
-    name='PiBirthday',
+_EXE_COMMON = dict(
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=False,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
@@ -73,24 +72,24 @@ exe_gui = EXE(
     entitlements_file=None,
 )
 
-# ---------- 命令行版：保留控制台，可用 --cli 参数 ----------
+# ---------- 图形界面版：入口 pi_birthday.py，不显示控制台 ----------
+a_gui = Analysis(['pi_birthday.py'], **_COMMON)
+pyz_gui = PYZ(a_gui.pure)
+
+exe_gui = EXE(
+    pyz_gui, a_gui.scripts, a_gui.binaries, a_gui.datas, [],
+    name='PiBirthday',
+    console=False,
+    **_EXE_COMMON,
+)
+
+# ---------- 命令行版：入口 cli.py，保留控制台 ----------
+a_cli = Analysis(['cli.py'], **_COMMON)
+pyz_cli = PYZ(a_cli.pure)
+
 exe_cli = EXE(
-    pyz,
-    a.scripts,
-    a.binaries,
-    a.datas,
-    [],
+    pyz_cli, a_cli.scripts, a_cli.binaries, a_cli.datas, [],
     name='PiBirthdayCLI',
-    debug=False,
-    bootloader_ignore_signals=False,
-    strip=False,
-    upx=False,
-    upx_exclude=[],
-    runtime_tmpdir=None,
     console=True,
-    disable_windowed_traceback=False,
-    argv_emulation=False,
-    target_arch=None,
-    codesign_identity=None,
-    entitlements_file=None,
+    **_EXE_COMMON,
 )
